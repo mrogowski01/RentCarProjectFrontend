@@ -1,34 +1,52 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
 
 export function AddOffer() {
-  const fuel_types = ['Diesel', 'Gasoline', 'Electric', 'Hybrid'];
-  const gear_types = ['Automatic', 'Manual'];
-
-  const [car, setCar] = useState({
-    brand: '',
-    model: '',
-    year_prod: '',
-    engine: '',
-    fuel_type: '',
-    color: '',
-    gear_type: '',
+  const [cars, setCars] = useState([]);
+  const [selectedCarId, setSelectedCarId] = useState('');
+  const [offer, setOffer] = useState({
     price: '',
-    imageurl: ''
+    availableFrom: '',
+    availableTo: ''
   });
 
-  const createCar = async () => {
+  const fetchUserCars = async () => {
+    try {
+      const userId = localStorage.getItem('id'); // Assuming user ID is stored in localStorage
+      const accessToken = localStorage.getItem('token');
+
+      const res = await axios.get(
+        (import.meta.env.VITE_APP_BASE_URL || 'http://localhost:8080') + `/api/cars/user/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          }
+        }
+      );
+
+      if (res) {
+        setCars(res.data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserCars();
+  }, []);
+
+  const createOffer = async () => {
     try {
       const accessToken = localStorage.getItem('token');
-      const userId = localStorage.getItem('id'); // Zakładając, że identyfikator użytkownika jest przechowywany w localStorage
+      const userId = localStorage.getItem('id'); // Assuming user ID is stored in localStorage
 
-      // Dodaj id_user do obiektu car
-      const carWithUserId = { ...car, id_user: parseInt(userId) };
-
-      // Wykonaj żądanie POST z id_user zawartym w treści żądania
+      // Create the offer object including the selected car ID and dates
+      const offerWithUserId = { ...offer, carId: selectedCarId, idUser: userId };
+      console.log(selectedCarId, userId);
       const res = await axios.post(
-        (import.meta.env.VITE_APP_BASE_URL || 'http://localhost:8080') + '/api/cars',
-        carWithUserId,
+        (import.meta.env.VITE_APP_BASE_URL || 'http://localhost:8080') + '/api/offers',
+        offerWithUserId,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -42,113 +60,38 @@ export function AddOffer() {
         window.location.reload();
       }
     } catch (err) {
-      alert('Błąd podczas dodawania samochodu!');
+      alert('Error adding offer!');
       console.log(err);
     }
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    createCar();
+    createOffer();
   };
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setCar({ ...car, [name]: value });
+    setOffer({ ...offer, [name]: value });
   };
 
   return (
     <form autoComplete="off" onSubmit={handleSubmit}>
       <div className="grid gap-5 place-items-center">
-        <h1 className="text-[#bbd5d8] text-xl">Add new car</h1>
+        <h1 className="text-[#bbd5d8] text-xl">Add New Offer</h1>
         <div>
-          <p>Brand</p>
-          <input
-            type="text"
-            name="brand"
-            value={car.brand}
-            size={50}
-            className="p-1.5"
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div>
-          <p>Model</p>
-          <input
-            type="text"
-            name="model"
-            value={car.model}
-            size={50}
-            className="p-1.5"
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div>
-          <p>Year of production</p>
-          <input
-            type="number"
-            name="year_prod"
-            value={car.year_prod}
-            size={50}
-            className="p-1.5"
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div>
-          <p>Engine capacity</p>
-          <input
-            type="text"
-            name="engine"
-            value={car.engine}
-            size={50}
-            className="p-1.5"
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div>
-          <p>Fuel type</p>
+          <p>Select Car</p>
           <select
-            name="fuel_type"
+            name="selectedCarId"
+            value={selectedCarId}
+            onChange={(e) => setSelectedCarId(e.target.value)}
             className="block w-[20rem] p-2.5"
-            onChange={handleInputChange}
             required
           >
-            <option value="">---choose type---</option>
-            {fuel_types.map((t, index) => (
-              <option key={index} value={t}>
-                {t}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <p>Color</p>
-          <input
-            type="text"
-            name="color"
-            value={car.color}
-            size={50}
-            className="p-1.5"
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div>
-          <p>Gearbox</p>
-          <select
-            name="gear_type"
-            className="block w-[20rem] p-2.5"
-            onChange={handleInputChange}
-            required
-          >
-            <option value="">---choose type---</option>
-            {gear_types.map((t, index) => (
-              <option key={index} value={t}>
-                {t}
+            <option value="">---Select Car---</option>
+            {cars.map((car) => (
+              <option key={car.id} value={car.id}>
+                {car.brand} {car.model} {car.year_prod} {car.engine} {car.fuel_type} {car.color} {car.gear_type}
               </option>
             ))}
           </select>
@@ -158,20 +101,29 @@ export function AddOffer() {
           <input
             type="number"
             name="price"
-            value={car.price}
-            size={50}
+            value={offer.price}
             className="p-1.5"
             onChange={handleInputChange}
             required
           />
         </div>
         <div>
-          <p>Image URL</p>
+          <p>Offer from</p>
           <input
-            type="text"
-            name="imageurl"
-            value={car.imageurl}
-            size={50}
+            type="date"
+            name="availableFrom"
+            value={offer.availableFrom}
+            className="p-1.5"
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+        <div>
+          <p>Offer to</p>
+          <input
+            type="date"
+            name="availableTo"
+            value={offer.availableTo}
             className="p-1.5"
             onChange={handleInputChange}
             required

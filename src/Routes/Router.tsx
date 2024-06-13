@@ -12,6 +12,7 @@ import { UserDashboard } from '../Pages/User/UserDashboard'
 import AllCars from '../Pages/Car/Cars'
 import AllOffers from '../Pages/Offer/Offers'
 import Edit from '../Pages/Edit'
+import EditOffer from '../Pages/EditOffer'
 import Followed from '../Pages/Followed'
 import Announcement from '../Pages/Announcement'
 
@@ -24,6 +25,7 @@ export enum routes {
   userdashboard = '/userdashboard/:action',
   landing = '/landing',
   edit = '/edit/:id',
+  editOffer = '/editOffer/:id',
   profile = 'profile/:id',
   followed = 'followed',
   all = '/*',
@@ -114,6 +116,14 @@ export const Router = () => (
       element={
         <ProtectedRoute>
           <Edit />
+        </ProtectedRoute>
+      }
+    ></Route>
+    <Route
+      path={routes.editOffer}
+      element={
+        <ProtectedRoute>
+          <EditOffer />
         </ProtectedRoute>
       }
     ></Route>
