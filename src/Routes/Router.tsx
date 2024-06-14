@@ -13,6 +13,7 @@ import AllCars from '../Pages/Car/Cars'
 import AllOffers from '../Pages/Offer/Offers'
 import Edit from '../Pages/Edit'
 import EditOffer from '../Pages/EditOffer'
+import ReserveOffer from '../Pages/ReserveOffer'
 import Followed from '../Pages/Followed'
 import Announcement from '../Pages/Announcement'
 
@@ -26,6 +27,7 @@ export enum routes {
   landing = '/landing',
   edit = '/edit/:id',
   editOffer = '/editOffer/:id',
+  reserveOffer = '/reserveOffer/:id',
   profile = 'profile/:id',
   followed = 'followed',
   all = '/*',
@@ -124,6 +126,14 @@ export const Router = () => (
       element={
         <ProtectedRoute>
           <EditOffer />
+        </ProtectedRoute>
+      }
+    ></Route>
+    <Route
+      path={routes.reserveOffer}
+      element={
+        <ProtectedRoute>
+          <ReserveOffer />
         </ProtectedRoute>
       }
     ></Route>
