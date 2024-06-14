@@ -1,92 +1,110 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Box, Divider, Avatar, SelectChangeEvent, Paper, Table, TableBody, TableCell, TableContainer, TablePagination, TableRow, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Select,MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Box, Select, MenuItem, FormControl, Divider, Avatar, Paper, Table, TableBody, TableCell, TableContainer, TablePagination, TableRow, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { Layout } from '../../Components/Layout';
 import WorkIcon from '@mui/icons-material/Work';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import InfoIcon from '@mui/icons-material/Info';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle'
+import { Navbar } from '../../Components/Navbar'
+import axios from 'axios'
 
 export default function AllOffers() {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const [results, setResults] = useState([]);
+    const [selectedId, setSelectedId] = useState<number>(-1);
+    const [page, setPage] = useState<number>(0);
+    const [rowsPerPage, setRowsPerPage] = useState<number>(5);
+    const [count, setCount] = useState<number>(0);
+    const [open, setOpen] = useState<boolean>(false);
+    const [offers, setOffers] = useState([]);
   
-    const [results, setResults] = useState([])
-  
-    const [page, setPage] = useState(0)
-    const [rowsPerPage, setRowsPerPage] = useState(5)
-    const [count, setCount] = useState(0)
-  
-    const [sortType, setSortType] = useState<string>('DESC')
-    const [location, setLocation] = useState<string>('')
-  
-    const handleSortTypeChange = (event: SelectChangeEvent<string>) => {
-      setSortType(event.target.value as string)
-    }
-    const handleLocationChange = (event: SelectChangeEvent<string>) => {
-      setLocation(event.target.value as string)
-    }
-    const getAllResults = async () => {
+    const getAllOffers = async () => {
       try {
-        const accessToken = localStorage.getItem('token')
+        const accessToken = localStorage.getItem('token');
+        const userId = localStorage.getItem('id'); // Zakładając, że identyfikator użytkownika jest przechowywany w localStorage
   
         const res = await axios.get(
-          (import.meta.env.VITE_APP_BASE_URL || 'http://localhost:8080') +
-            '/api/announcements/sorted/' +
-            (location !== '' ? location + '/' : '') +
-            sortType,
+          (import.meta.env.VITE_APP_BASE_URL || 'http://localhost:8080') + `/api/offers`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`
             }
           }
-        )
+        );
         if (res) {
-          setResults(res.data)
+          setOffers(res.data);
+          console.log(res.data);
         }
       } catch (err) {
-        console.log(err)
+        console.log(err);
       }
-    }
+    };
+  
+    const deleteOffer = async (offerId: number) => {
+      try {
+        const accessToken = localStorage.getItem('token');
+        const userId = localStorage.getItem('id'); 
+        
+        const res = await axios.delete(
+          (import.meta.env.VITE_APP_BASE_URL || 'http://localhost:8080') + '/api/offers/' + offerId,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`
+            }
+          }
+        );
+        if (res) {
+          window.location.reload();
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+  
+    const handleDeleteAlert = (id: number) => {
+      setSelectedId(id);
+      setOpen(true);
+    };
+  
+    const handleCloseDelete = () => {
+      deleteOffer(selectedId);
+      setOpen(false);
+    };
+  
+    const handleCloseCancel = () => {
+      setOpen(false);
+    };
   
     useEffect(() => {
-      getAllResults()
-    }, [sortType, location])
+      getAllOffers();
+    }, []);
   
     useEffect(() => {
-      if (results) {
-        setCount(results.length)
+      if (offers) {
+        setCount(offers.length);
       }
-    }, [results])
+    }, [offers]);
   
     const visibleRows = useMemo(
-      () => results?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-      [page, rowsPerPage, results]
-    )
+      () => offers?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+      [page, rowsPerPage, offers]
+    );
   
     const handleChangePage = (_event: unknown, newPage: number) => {
-      setPage(newPage)
-    }
+      setPage(newPage);
+    };
   
-    const handleChangeRowsPerPage = (
-      event: React.ChangeEvent<HTMLInputElement>
-    ) => {
-      setRowsPerPage(parseInt(event.target.value, 10))
-      setPage(0)
-    }
+    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setRowsPerPage(parseInt(event.target.value, 10));
+      setPage(0);
+    };
   
-    const handleClick = (announcementId: number) => {
-      navigate('/announcement/' + announcementId)
-    }
-  
-    const handleClickAvatar = (
-      e: React.MouseEvent<HTMLDivElement>,
-      userId: number
-    ) => {
-      e.stopPropagation()
-      navigate('/profile/' + userId)
-    }
+    const editOffer = (offerId: number) => {
+      navigate('/editOffer/' + offerId);
+    };
   
     return (
       <Box
@@ -102,108 +120,104 @@ export default function AllOffers() {
           orientation="horizontal"
           sx={{ mt: '6px', background: 'rgb(209 213 219)' }}
         />
-        <Layout>
-          <Box sx={{ p: '2vh', fontSize: 40, color: '#9f50ff' }}>
-            <h2 className="tracking-wider text-[#bbd5d8]">
-              Aktualna lista ogłoszeń
-            </h2>
-            <Divider orientation="horizontal" sx={{ mt: '4px' }} />
+
+      <Layout>
+        <Box sx={{ p: '2vh', fontSize: 40, color: '#9f50ff' }}>
+          <h2 className="tracking-wider text-[#bbd5d8]">Lista ofert</h2>
+          <Divider orientation="horizontal" sx={{ mt: '4px' }} />
   
-            <Paper sx={{ p: '2vh' }}>
-              <Box
-                sx={{ display: 'flex', justifyContent: 'flex-end', margin: 2 }}
-              >
-                <FormControl sx={{ minWidth: 200 }}>
-                  <InputLabel id="sort-type-label">Sortuj po dacie</InputLabel>
-                  <Select
-                    labelId="sort-type-label"
-                    id="sort-type"
-                    value={sortType}
-                    onChange={handleSortTypeChange}
-                  >
-                    <MenuItem value="DESC">Od najnowszych</MenuItem>
-                    <MenuItem value="ASC">Od najstarszych</MenuItem>
-                  </Select>
-                </FormControl>
-                <FormControl sx={{ minWidth: 200, marginLeft: 16 }}>
-                  <InputLabel id="location-label">
-                    Filtruj po lokalizacji
-                  </InputLabel>
-                  <Select
-                    labelId="location-label"
-                    id="location"
-                    value={location}
-                    onChange={handleLocationChange}
-                  >
-                    <MenuItem value="">Wszystkie</MenuItem>
-                    {locations.map((loc, index) => (
-                      <MenuItem key={index} value={loc}>
-                        {loc}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Box>
-              <TableContainer>
-                <Table sx={{ minWidth: 650 }}>
-                  <TableBody>
-                    {visibleRows?.map((row: Announcement, index) => (
-                      <TableRow
-                        key={index}
-                        onClick={() => handleClick(row.id)}
-                        className="cursor-pointer hover:bg-[#bbd5d8]"
-                      >
-                        <TableCell>
-                          <Avatar>
-                            {
-                              {
-                                JOB: <WorkIcon />,
-                                INFORMATION: <InfoIcon />,
-                                OFFER: <LocalOfferIcon />
-                              }[row.type]
-                            }
-                          </Avatar>
-                        </TableCell>
-                        <TableCell>{row.title}</TableCell>
-                        <TableCell>
-                          {row.createdAt.slice(0, 10) +
-                            ' ' +
-                            row.createdAt.slice(11, 16)}
-                        </TableCell>
-                        <TableCell>{row.location}</TableCell>
-                        <TableCell>
-                          <div
-                            className="text-[20px] flex gap-2 hover:text-red-500 "
-                            onClick={(e: React.MouseEvent<HTMLDivElement>) =>
-                              handleClickAvatar(e, row.user.id)
-                            }
-                          >
-                            <div>
-                              <AccountCircleIcon sx={{ fontSize: 40 }} />
-                            </div>
-                            <div className="flex items-center">
-                              {row.user.username}
-                            </div>
-                          </div>
+          <Paper>
+            <TableContainer>
+              <Table sx={{ minWidth: 650 }}>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>#</TableCell>
+                    <TableCell>Marka</TableCell>
+                    <TableCell>Model</TableCell>
+                    <TableCell>Rok produkcji</TableCell>
+                    <TableCell>Silnik</TableCell>
+                    <TableCell>Paliwo</TableCell>
+                    <TableCell>Kolor</TableCell>
+                    <TableCell>Skrzynia biegów</TableCell>
+                  </TableRow>
+                  {visibleRows?.map((offer: any, index: number) => (
+                    <React.Fragment key={index}>
+                      {/* First row with car details */}
+                      <TableRow>
+                        <TableCell>{index + 1}</TableCell>
+                        <TableCell>{offer.carDetails?.brand}</TableCell>
+                        <TableCell>{offer.carDetails?.model}</TableCell>
+                        <TableCell>{offer.carDetails?.year_prod}</TableCell>
+                        <TableCell>{offer.carDetails?.engine}</TableCell>
+                        <TableCell>{offer.carDetails?.fuel_type}</TableCell>
+                        <TableCell>{offer.carDetails?.color}</TableCell>
+                        <TableCell>{offer.carDetails?.gear_type}</TableCell>
+                      </TableRow>
+                      {/* Second row with price and dates */}
+                      <TableRow>
+                        <TableCell colSpan={8}>
+                          <Box display="flex" justifyContent="space-between" alignItems="center">
+                            <Box>
+                              Cena: {offer.price}
+                            </Box>
+                            <Box>
+                              Od: {offer.availableFrom} do {offer.availableTo}
+                            </Box>
+                            <Box>
+                              <Button
+                                onClick={() => editOffer(offer.idOffer)}
+                                className="hover:text-[#bbd5d8]"
+                              >
+                                <EditIcon sx={{ fontSize: 35 }} />
+                              </Button>
+                              <Button
+                                onClick={() => handleDeleteAlert(offer.idOffer)}
+                                className="hover:text-[#bbd5d8]"
+                              >
+                                <DeleteIcon sx={{ fontSize: 35 }} />
+                              </Button>
+                            </Box>
+                          </Box>
                         </TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 20]}
-                component="div"
-                count={count || 0}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </Paper>
-          </Box>
-        </Layout>
+                    </React.Fragment>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 20]}
+              component="div"
+              count={count || 0}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </Paper>
+        </Box>
+        <Dialog
+          open={open}
+          onClose={handleCloseCancel}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {'Czy na pewno chcesz usunąć wybraną ofertę?'}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Usunięte dane zostaną utracone!
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDelete}>Usuń</Button>
+            <Button onClick={handleCloseCancel} autoFocus>
+              Anuluj
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Layout>
       </Box>
-    )
+    );
   }
-  
