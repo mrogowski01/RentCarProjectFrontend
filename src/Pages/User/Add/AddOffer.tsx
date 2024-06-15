@@ -1,5 +1,6 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
+import AlertDismissibleExample from '../../../Components/AlertDismissibleExample'; 
 
 export function AddOffer() {
   const [cars, setCars] = useState([]);
@@ -9,6 +10,7 @@ export function AddOffer() {
     availableFrom: '',
     availableTo: ''
   });
+  const [errorMessage, setErrorMessage] = useState('');
 
   const fetchUserCars = async () => {
     try {
@@ -60,14 +62,18 @@ export function AddOffer() {
         window.location.reload();
       }
     } catch (err) {
-      alert('Error adding offer!');
+      if (err.response && err.response.data) {
+        setErrorMessage(err.response.data); // Set error message from server response
+      } else {
+        setErrorMessage('Error adding offer!');
+      }
       console.log(err);
     }
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    createOffer();
+    await createOffer();
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -75,9 +81,20 @@ export function AddOffer() {
     setOffer({ ...offer, [name]: value });
   };
 
+  const handleAlertClose = () => {
+    setErrorMessage('');
+    // Optionally, reset only specific fields like availableFrom and availableTo
+    setOffer({
+      ...offer,
+      availableFrom: '',
+      availableTo: ''
+    });
+  };
+
   return (
     <form autoComplete="off" onSubmit={handleSubmit}>
       <div className="grid gap-5 place-items-center">
+        {errorMessage && <AlertDismissibleExample message={errorMessage} onClose={handleAlertClose} />}
         <h1 className="text-[#bbd5d8] text-xl">Add New Offer</h1>
         <div>
           <p>Select Car</p>

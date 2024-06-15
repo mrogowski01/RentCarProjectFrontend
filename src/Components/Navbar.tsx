@@ -18,10 +18,6 @@ const props = {
       navigate: '/offers'
     },
     {
-      name: 'Moje',
-      navigate: '/user/list'
-    },
-    {
       name: 'User dashboard',
       navigate: '/userdashboard/show'
     }
