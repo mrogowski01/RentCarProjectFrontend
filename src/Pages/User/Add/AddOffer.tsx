@@ -83,7 +83,6 @@ export function AddOffer() {
 
   const handleAlertClose = () => {
     setErrorMessage('');
-    // Optionally, reset only specific fields like availableFrom and availableTo
     setOffer({
       ...offer,
       availableFrom: '',

@@ -2,6 +2,7 @@ import { Box } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
+import AlertDismissibleExample from '../Components/AlertDismissibleExample'; 
 
 import { Layout } from '../Components/Layout';
 
@@ -25,6 +26,8 @@ export default function ReserveOffer() {
     dateTo: ''
   });
 
+  const [error, setError] = useState(""); 
+
   const handleClick = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     await createReservation();
@@ -45,6 +48,14 @@ export default function ReserveOffer() {
       if (res.data) {
         const { carId, idUser, price, availableFrom, availableTo } = res.data;
         setOffer({ carId, idUser, price, availableFrom, availableTo });
+
+        // Set initial values for reservation based on offer
+        setReservation({
+          idOffer: id,
+          idUser: idUser,
+          dateFrom: "",
+          dateTo: ""
+        });
       }
     } catch (err) {
       console.log(err);
@@ -52,62 +63,12 @@ export default function ReserveOffer() {
     }
   };
 
-//   const editReservation = async () => {
-//     try {
-//       const accessToken = localStorage.getItem('token');
-//       console.log(id);
-//       const res = await axios.put(
-//         `${import.meta.env.VITE_APP_BASE_URL || 'http://localhost:8080'}/api/offers/` + id,
-//         offer,
-//         {
-//           headers: {
-//             'Content-Type': 'application/json',
-//             Authorization: `Bearer ${accessToken}`
-//           }
-//         }
-//       );
-//       if (res.data) {
-//         console.log(res.data);
-//         navigate('/userdashboard/show');
-//       }
-//     } catch (err) {
-//       alert('Error editing offer!');
-//       console.log(err);
-//     }
-//   };
-
-//   const fetchUserCars = async () => {
-//     try {
-//       const userId = localStorage.getItem('id'); // Assuming user ID is stored in localStorage
-//       const accessToken = localStorage.getItem('token');
-
-//       const res = await axios.get(
-//         (import.meta.env.VITE_APP_BASE_URL || 'http://localhost:8080') + `/api/cars/user/${userId}`,
-//         {
-//           headers: {
-//             Authorization: `Bearer ${accessToken}`
-//           }
-//         }
-//       );
-
-//       if (res) {
-//         setCars(res.data);
-//       }
-//     } catch (err) {
-//       console.log(err);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchUserCars();
-//   }, []);
-
   const createReservation = async () => {
     try {
       const accessToken = localStorage.getItem('token');
       const userId = localStorage.getItem('id'); // Assuming user ID is stored in localStorage
 
-      // Create the offer object including the selected car ID and dates
+      // Create the reservation object including the selected offer ID and dates
       const reservationWithUserIdAndOfferId = { ...reservation, idOffer: id, idUser: userId };
       console.log(id, userId);
       console.log(reservationWithUserIdAndOfferId);
@@ -127,15 +88,14 @@ export default function ReserveOffer() {
         navigate('/offers');
       }
     } catch (err) {
-      alert('Error adding reservation!');
+      if (err.response && err.response.data) {
+        setError(err.response.data); // Ustawienie błędu z odpowiedzi serwera
+      } else {
+        setError('Error adding reservation!'); // Domyślny komunikat błędu
+      }
       console.log(err);
     }
   };
-
-//   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-//     e.preventDefault();
-//     createOffer();
-//   };
 
   const handleCancel = () => {
     navigate('/offers');
@@ -149,6 +109,15 @@ export default function ReserveOffer() {
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setReservation({ ...reservation, [name]: value });
+  };
+
+  const handleAlertClose = () => {
+    setError('');
+    setReservation({
+      ...reservation,
+      dateFrom: '',
+      dateTo: ''
+    });
   };
 
   return (
@@ -170,10 +139,10 @@ export default function ReserveOffer() {
         >
           <form autoComplete="off" onSubmit={handleClick}>
             <div className="grid gap-5 place-items-center ">
-              <h1 className="text-[#bbd5d8] text-[40px]">Edit Offer</h1>
+              <h1 className="text-[#bbd5d8] text-[40px]">Reserve a car</h1>
 
               <div>
-                <p>Offer from</p>
+                <p>Offer available from: {offer.availableFrom}</p>
                 <input
                   type="date"
                   name="dateFrom"
@@ -184,7 +153,7 @@ export default function ReserveOffer() {
                 />
               </div>
               <div>
-                <p>Offer to</p>
+                <p>Offer available to: {offer.availableTo}</p>
                 <input
                   type="date"
                   name="dateTo"
@@ -207,9 +176,12 @@ export default function ReserveOffer() {
                   type="submit"
                   className="bg-[#bbd5d8] p-2.5 mb-10 rounded"
                 >
-                  Edit
+                  Submit
                 </button>
               </div>
+
+              {/* Wyświetlanie komponentu AlertDismissibleExample w przypadku wystąpienia błędu */}
+              {error && <AlertDismissibleExample message={error} onClose={handleAlertClose} />}
             </div>
           </form>
         </Box>
