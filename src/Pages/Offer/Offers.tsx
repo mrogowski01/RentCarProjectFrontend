@@ -1,24 +1,18 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Box, Paper, Table, TableBody, TableCell, TableContainer, TablePagination, TableRow, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider } from '@mui/material';
+import { Box, Paper, Table, TableBody, TableCell, TableContainer, TablePagination, TableRow, Button, Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '../../Components/Layout';
 import { Navbar } from '../../Components/Navbar';
 import axios from 'axios';
+import '../../index.css'
 
 export default function AllOffers() {
     const navigate = useNavigate();
-    const [results, setResults] = useState([]);
-    const [selectedId, setSelectedId] = useState<number>(-1);
-    const [page, setPage] = useState<number>(0);
-    const [rowsPerPage, setRowsPerPage] = useState<number>(5);
-    const [count, setCount] = useState<number>(0);
-    const [open, setOpen] = useState<boolean>(false);
     const [offers, setOffers] = useState([]);
 
     const getAllOffers = async () => {
         try {
             const accessToken = localStorage.getItem('token');
-            const userId = localStorage.getItem('id'); // Zakładając, że identyfikator użytkownika jest przechowywany w localStorage
 
             const res = await axios.get(
                 (import.meta.env.VITE_APP_BASE_URL || 'http://localhost:8080') + `/api/offers`,
@@ -28,47 +22,20 @@ export default function AllOffers() {
                     }
                 }
             );
-            if (res) {
+            if (res.data) {
                 setOffers(res.data);
-                console.log(res.data);
             }
         } catch (err) {
             console.log(err);
         }
     };
 
-    const handleReserve = (offerId: number) => {
-        // Dodaj logikę rezerwacji oferty tutaj
-        console.log(`Rezerwacja oferty ${offerId}`);
-        navigate('/reserveOffer/' + offerId);
-    };
-    
-    // const editOffer = (offerId: number) => {
-    //   navigate('/editOffer/' + offerId);
-    // };
-
     useEffect(() => {
         getAllOffers();
     }, []);
 
-    useEffect(() => {
-        if (offers) {
-            setCount(offers.length);
-        }
-    }, [offers]);
-
-    const visibleRows = useMemo(
-        () => offers?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-        [page, rowsPerPage, offers]
-    );
-
-    const handleChangePage = (_event: unknown, newPage: number) => {
-        setPage(newPage);
-    };
-
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
+    const handleReserve = (offerId: number) => {
+        navigate(`/reserveOffer/${offerId}`);
     };
 
     return (
@@ -79,13 +46,12 @@ export default function AllOffers() {
             overflow="hidden"
             flexDirection="column"
         >
-            <Navbar />
+          <Navbar />
             <Divider
                 light
                 orientation="horizontal"
                 sx={{ mt: '6px', background: 'rgb(209 213 219)' }}
             />
-
             <Layout>
                 <Box sx={{ p: '2vh', fontSize: 40, color: '#9f50ff' }}>
                     <h2 className="tracking-wider text-[#bbd5d8]">Lista ofert</h2>
@@ -105,10 +71,9 @@ export default function AllOffers() {
                                         <TableCell>Kolor</TableCell>
                                         <TableCell>Skrzynia biegów</TableCell>
                                     </TableRow>
-                                    {visibleRows?.map((offer: any, index: number) => (
-                                        <React.Fragment key={index}>
-                                            {/* First row with car details */}
-                                            <TableRow>
+                                    {offers.map((offer, index) => (
+                                        <React.Fragment key={offer.idOffer} >
+                                            <TableRow className={offer.reserved ? 'reserved' : ''}>
                                                 <TableCell>{index + 1}</TableCell>
                                                 <TableCell>{offer.carDetails?.brand}</TableCell>
                                                 <TableCell>{offer.carDetails?.model}</TableCell>
@@ -118,8 +83,7 @@ export default function AllOffers() {
                                                 <TableCell>{offer.carDetails?.color}</TableCell>
                                                 <TableCell>{offer.carDetails?.gear_type}</TableCell>
                                             </TableRow>
-                                            {/* Second row with price and dates */}
-                                            <TableRow>
+                                            <TableRow className={offer.reserved ? 'reserved' : ''}>
                                                 <TableCell colSpan={8}>
                                                     <Box display="flex" justifyContent="space-between" alignItems="center">
                                                         <Box>
@@ -128,14 +92,21 @@ export default function AllOffers() {
                                                         <Box>
                                                             Od: {offer.availableFrom} do {offer.availableTo}
                                                         </Box>
-                                                        <Box>
-                                                            <Button
-                                                                onClick={() => handleReserve(offer.idOffer)}
-                                                                className="hover:text-[#bbd5d8]"
-                                                            >
-                                                                Zarezerwuj
-                                                            </Button>
-                                                        </Box>
+                                                        {!offer.reserved && (
+                                                            <Box>
+                                                                <Button
+                                                                    onClick={() => handleReserve(offer.idOffer)}
+                                                                    className="hover:text-[#bbd5d8]"
+                                                                >
+                                                                    Zarezerwuj
+                                                                </Button>
+                                                            </Box>
+                                                        )}
+                                                          {offer.reserved && (
+                                                            <Box>
+                                                              <p className="hover:text-[#bbd5d8]"> RESERVED</p>
+                                                            </Box>
+                                                        )}
                                                     </Box>
                                                 </TableCell>
                                             </TableRow>
@@ -144,15 +115,6 @@ export default function AllOffers() {
                                 </TableBody>
                             </Table>
                         </TableContainer>
-                        <TablePagination
-                            rowsPerPageOptions={[5, 10, 20]}
-                            component="div"
-                            count={count || 0}
-                            rowsPerPage={rowsPerPage}
-                            page={page}
-                            onPageChange={handleChangePage}
-                            onRowsPerPageChange={handleChangeRowsPerPage}
-                        />
                     </Paper>
                 </Box>
             </Layout>

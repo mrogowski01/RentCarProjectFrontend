@@ -3,33 +3,24 @@ import { Routes, Route } from 'react-router-dom'
 import { ProtectedRoute } from './ProtectedRoute'
 import { OpenRoute } from './OpenRoute'
 import Landing from '../Pages/Landing'
-import UserPage from '../Pages/UserPage'
 import Login from '../Pages/Login'
-import Results from '../Pages/Results'
 import Register from '../Pages/Register'
-import { User } from '../Pages/User/User'
 import { UserDashboard } from '../Pages/User/UserDashboard'
 import AllCars from '../Pages/Car/Cars'
 import AllOffers from '../Pages/Offer/Offers'
 import Edit from '../Pages/Edit'
 import EditOffer from '../Pages/EditOffer'
 import ReserveOffer from '../Pages/ReserveOffer'
-import Followed from '../Pages/Followed'
-import Announcement from '../Pages/Announcement'
 
 export enum routes {
   register = '/register',
   login = '/login',
-  results = '/results',
-  announcement = '/announcement/:id',
-  user = '/user/:action',
   userdashboard = '/userdashboard/:action',
   landing = '/landing',
   edit = '/edit/:id',
   editOffer = '/editOffer/:id',
   reserveOffer = '/reserveOffer/:id',
   profile = 'profile/:id',
-  followed = 'followed',
   all = '/*',
   allcars = '/cars',
   alloffers = '/offers'
@@ -74,14 +65,6 @@ export const Router = () => (
       }
     ></Route>
     <Route
-      path={routes.user}
-      element={
-        <ProtectedRoute>
-          <User />
-        </ProtectedRoute>
-      }
-    ></Route>
-    <Route
       path={routes.userdashboard}
       element={
         <ProtectedRoute>
@@ -102,14 +85,6 @@ export const Router = () => (
       element={
         <ProtectedRoute>
           <AllOffers />
-        </ProtectedRoute>
-      }
-    ></Route>
-    <Route
-      path={routes.results}
-      element={
-        <ProtectedRoute>
-          <Results />
         </ProtectedRoute>
       }
     ></Route>
@@ -137,38 +112,6 @@ export const Router = () => (
         </ProtectedRoute>
       }
     ></Route>
-    <Route
-      path={routes.announcement}
-      element={
-        <ProtectedRoute>
-          <Announcement />
-        </ProtectedRoute>
-      }
-    ></Route>
-    <Route
-      path={routes.announcement}
-      element={
-        <ProtectedRoute>
-          <Announcement />
-        </ProtectedRoute>
-      }
-    ></Route>
-    <Route
-      path={routes.profile}
-      element={
-        <ProtectedRoute>
-          <UserPage />
-        </ProtectedRoute>
-      }
-    ></Route>
-    <Route
-      path={routes.followed}
-      element={
-        <ProtectedRoute>
-          <Followed />
-        </ProtectedRoute>
-      }
-    ></Route>
-    {/* Admin */}
+    {}
   </Routes>
 )

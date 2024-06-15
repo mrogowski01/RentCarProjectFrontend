@@ -6,10 +6,6 @@ import Logout from '@mui/icons-material/Logout'
 const props = {
   pages: [
     {
-      name: 'Przeglądaj',
-      navigate: '/results'
-    },
-    {
       name: 'All cars',
       navigate: '/cars'
     },
