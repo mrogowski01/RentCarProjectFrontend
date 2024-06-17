@@ -23,7 +23,7 @@ export const Sidebar = ({ elements }: sidebarItems) => {
                 display="flex"
                 alignItems="center"
                 key={to}
-                bgcolor={isActive ? '#242424' : '#697f66'}
+                bgcolor={isActive ? '#2b2929' : '#697f66'}
                 color={isActive ? 'white' : '#1a1b2d'}
                 px="16px"
                 py="12px"
