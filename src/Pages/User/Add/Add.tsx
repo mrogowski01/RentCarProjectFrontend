@@ -155,7 +155,7 @@ export function Add() {
             ))}
           </select>
         </div>
-        <div>
+        {/* <div>
           <p>Price</p>
           <input
             type="number"
@@ -166,8 +166,8 @@ export function Add() {
             onChange={handleInputChange}
             required
           />
-        </div>
-        <div>
+        </div> */}
+        {/* <div>
           <p>Image URL</p>
           <input
             type="text"
@@ -178,7 +178,7 @@ export function Add() {
             onChange={handleInputChange}
             required
           />
-        </div>
+        </div> */}
         <button type="submit" className="bg-[#bbd5d8] p-2.5 mb-10 rounded">
           Submit
         </button>
