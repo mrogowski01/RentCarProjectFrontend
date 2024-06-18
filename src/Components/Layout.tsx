@@ -25,7 +25,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, sidebar }) => (
       sx={{
         height: '95%',
         overflowY: 'auto',
-        backgroundColor: alpha('#1a1b2d', 0.05),
+        backgroundColor: alpha('#627762', 0.05),
         opacity: '50',
         m: '2vh',
         borderRadius: '1vh'

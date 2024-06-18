@@ -121,7 +121,7 @@ export const Show = () => {
                       <TableCell>Fuel</TableCell>
                       <TableCell>Color</TableCell>
                       <TableCell>Gearbox</TableCell>
-                      <TableCell>Price</TableCell>
+                      {/* <TableCell>Price</TableCell> */}
                       <TableCell>Edit parameters</TableCell>
                       <TableCell>Delete</TableCell>
                     </TableRow>
@@ -135,7 +135,7 @@ export const Show = () => {
                     <TableCell>{row.fuel_type}</TableCell>
                     <TableCell>{row.color}</TableCell>
                     <TableCell>{row.gear_type}</TableCell>
-                    <TableCell>{row.price}</TableCell>
+                    {/* <TableCell>{row.price}</TableCell> */}
                     <TableCell>
                       <button
                         onClick={() => editOne(row.id)}

@@ -36,7 +36,7 @@ export const Navbar = () => {
         onClick={() => navigate(el.navigate)}
         className={clsx(
           'rounded-md p-2 px-5 text-xl font-normal tracking-wider cursor-pointer',
-          window.location.pathname === el.navigate && 'bg-[#bbd5d8] '
+          window.location.pathname === el.navigate && 'bg-[#627762] '
         )}
         key={index}
       >
@@ -52,8 +52,8 @@ export const Navbar = () => {
         </div>
         <div onClick={handleClick} className="h-[5hv] pr-5 ">
           <Logout
-            className="cursor-pointer hover:text-[#bbd5d8]"
-            sx={{ fontSize: '45px', color: '[#bbd5d8]' }}
+            className="cursor-pointer hover:text-[#627762]"
+            sx={{ fontSize: '45px', color: '[#627762]' }}
           />
         </div>
       </div>

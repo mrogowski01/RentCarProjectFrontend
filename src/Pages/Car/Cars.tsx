@@ -119,7 +119,7 @@ export default function Show() {
         <Layout>
           <Box sx={{ p: '2vh', fontSize: 40, color: '#9f50ff' }}>
             <h2 className="tracking-wider text-[#bbd5d8]">Cars for rent</h2>
-            <Divider orientation="horizontal" sx={{ mt: '4px' }} />
+            <Divider orientation="horizontal" sx={{ mt: '2px' }} />
   
             <Paper>
               <TableContainer>
@@ -134,7 +134,7 @@ export default function Show() {
                       <TableCell>Fuel</TableCell>
                       <TableCell>Color</TableCell>
                       <TableCell>Gearbox</TableCell>
-                      <TableCell>Price</TableCell>
+                      {/* <TableCell>Price</TableCell> */}
                     </TableRow>
                     {visibleRows?.map((row: any, index: number) => (
                       <TableRow key={index}>
@@ -146,7 +146,7 @@ export default function Show() {
                         <TableCell>{row.fuel_type}</TableCell>
                         <TableCell>{row.color}</TableCell>
                         <TableCell>{row.gear_type}</TableCell>
-                        <TableCell>{row.price}</TableCell>
+                        {/* <TableCell>{row.price}</TableCell> */}
                       </TableRow>
                     ))}
                   </TableBody>
