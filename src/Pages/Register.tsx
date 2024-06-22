@@ -8,14 +8,11 @@ export default function Register() {
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  // const [passwordRepeat, setPasswordRepeat] = useState('')
+ 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // if (password !== passwordRepeat) {
-    //   alert('Podane hasła nie są identyczne!')
-    //   return
-    // }
+   
     const dataJson = JSON.stringify({
       username: username,
       password: password
@@ -76,17 +73,7 @@ export default function Register() {
             required
           ></input>
         </div>
-        {/* <div>
-          <p>Powtórz hasło</p>
-          <input
-            type="password"
-            className="p-1.5"
-            onChange={(e) => {
-              setPasswordRepeat(e.target.value)
-            }}
-            required
-          ></input>
-        </div> */}
+       
         <button type="submit" className="bg-[#4036a1] p-2.5 mb-10 rounded">
         <p style={{ color: '#f7fcfc' }}>
           REGISTER

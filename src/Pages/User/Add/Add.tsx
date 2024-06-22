@@ -20,12 +20,12 @@ export function Add() {
   const createCar = async () => {
     try {
       const accessToken = localStorage.getItem('token');
-      const userId = localStorage.getItem('id'); // Zakładając, że identyfikator użytkownika jest przechowywany w localStorage
+      const userId = localStorage.getItem('id'); 
 
-      // Dodaj id_user do obiektu car
+    
       const carWithUserId = { ...car, idUser: userId };
 
-      // Wykonaj żądanie POST z id_user zawartym w treści żądania
+      
       const res = await axios.post(
         (import.meta.env.VITE_APP_BASE_URL || 'http://localhost:8080') + '/api/cars',
         carWithUserId,

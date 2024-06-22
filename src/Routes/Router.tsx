@@ -28,15 +28,7 @@ export enum routes {
 
 export const Router = () => (
   <Routes>
-    {/* open routes*/}
-    {/* <Route
-      path={routes.home}
-      element={
-        <OpenRoute>
-          <Home />
-        </OpenRoute>
-      }
-    ></Route> */}
+  
     <Route path={routes.all} element={<Login />}></Route>
     <Route
       path={routes.login}
@@ -55,7 +47,7 @@ export const Router = () => (
       }
     ></Route>
 
-    {/* login required - protected routes*/}
+
     <Route
       path={routes.landing}
       element={

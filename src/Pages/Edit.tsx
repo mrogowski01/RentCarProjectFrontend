@@ -82,7 +82,7 @@ export default function Edit() {
 
   useEffect(() => {
     getCar();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, []);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -202,7 +202,7 @@ export default function Edit() {
                   ))}
                 </select>
               </div>
-              <div>
+              {/* <div>
                 <p>Price</p>
                 <input
                   type="text"
@@ -225,7 +225,7 @@ export default function Edit() {
                   onChange={handleInputChange}
                   required
                 />
-              </div>
+              </div> */}
               <div className="grid gap-6 grid-cols-2 ">
                 <button
                   type="button"

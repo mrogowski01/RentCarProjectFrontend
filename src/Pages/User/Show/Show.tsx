@@ -21,7 +21,7 @@ export const Show = () => {
   const getAllResults = async () => {
     try {
       const accessToken = localStorage.getItem('token');
-      const userId = localStorage.getItem('id'); // Zakładając, że identyfikator użytkownika jest przechowywany w localStorage
+      const userId = localStorage.getItem('id'); 
 
       const res = await axios.get(
         (import.meta.env.VITE_APP_BASE_URL || 'http://localhost:8080') + '/api/cars/user/' + userId,

@@ -18,7 +18,7 @@ export const ShowReservations = () => {
   const getAllReservations = async () => {
     try {
       const accessToken = localStorage.getItem('token');
-      const userId = localStorage.getItem('id'); // Zakładając, że identyfikator użytkownika jest przechowywany w localStorage
+      const userId = localStorage.getItem('id'); 
 
       const res = await axios.get(
         (import.meta.env.VITE_APP_BASE_URL || 'http://localhost:8080') + `/api/reservations/user/${userId}/reservations-with-offers`,
@@ -124,7 +124,6 @@ export const ShowReservations = () => {
                 </TableRow>
                 {visibleRows?.map((reservation: any, index: number) => (
                   <React.Fragment key={index}>
-                    {/* First row with car details */}
                     <TableRow>
                       <TableCell>{index + 1}</TableCell>
                       <TableCell>{reservation.offerDetails?.carDetails?.brand}</TableCell>
@@ -137,7 +136,6 @@ export const ShowReservations = () => {
                       <TableCell>{reservation.dateFrom}</TableCell>
                       <TableCell>{reservation.dateTo}</TableCell>
                     </TableRow>
-                    {/* Second row with price and actions */}
                     <TableRow>
                       <TableCell colSpan={10}>
                         <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -145,12 +143,6 @@ export const ShowReservations = () => {
                             Cena: {reservation.offerDetails?.price}
                           </Box>
                           <Box>
-                            {/* <Button
-                              onClick={() => editReservation(reservation.idReservation)}
-                              className="hover:text-[#bbd5d8]"
-                            >
-                              <EditIcon sx={{ fontSize: 35 }} />
-                            </Button> */}
                             <Button
                               onClick={() => handleDeleteAlert(reservation.idReservation)}
                               className="hover:text-[#bbd5d8]"

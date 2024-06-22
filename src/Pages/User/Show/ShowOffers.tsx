@@ -18,7 +18,7 @@ export const ShowOffers = () => {
   const getAllOffers = async () => {
     try {
       const accessToken = localStorage.getItem('token');
-      const userId = localStorage.getItem('id'); // Zakładając, że identyfikator użytkownika jest przechowywany w localStorage
+      const userId = localStorage.getItem('id'); 
 
       const res = await axios.get(
         (import.meta.env.VITE_APP_BASE_URL || 'http://localhost:8080') + `/api/offers/user/${userId}/offers-with-cars`,
@@ -122,7 +122,6 @@ export const ShowOffers = () => {
                 </TableRow>
                 {visibleRows?.map((offer: any, index: number) => (
                   <React.Fragment key={index}>
-                    {/* First row with car details */}
                     <TableRow>
                       <TableCell>{index + 1}</TableCell>
                       <TableCell>{offer.carDetails?.brand}</TableCell>
@@ -133,7 +132,6 @@ export const ShowOffers = () => {
                       <TableCell>{offer.carDetails?.color}</TableCell>
                       <TableCell>{offer.carDetails?.gear_type}</TableCell>
                     </TableRow>
-                    {/* Second row with price and dates */}
                     <TableRow>
                       <TableCell colSpan={8}>
                         <Box display="flex" justifyContent="space-between" alignItems="center">

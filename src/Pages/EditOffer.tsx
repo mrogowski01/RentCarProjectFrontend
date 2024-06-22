@@ -2,6 +2,7 @@ import { Box } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
+import AlertDismissibleExample from '../Components/AlertDismissibleExample'; 
 
 import { Layout } from '../Components/Layout';
 
@@ -16,6 +17,8 @@ export default function EditOffer() {
     availableFrom: '',
     availableTo: ''
   });
+
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleClick = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -63,7 +66,11 @@ export default function EditOffer() {
         navigate('/userdashboard/show');
       }
     } catch (err) {
-      alert('Error editing offer!');
+      if (err.response && err.response.data) {
+        setErrorMessage(err.response.data);
+      } else {
+        setErrorMessage('Error adding offer!');
+      }
       console.log(err);
     }
   };
@@ -74,12 +81,21 @@ export default function EditOffer() {
 
   useEffect(() => {
     getOffer();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, []);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setOffer({ ...offer, [name]: value });
+  };
+
+  const handleAlertClose = () => {
+    setErrorMessage('');
+    setOffer({
+      ...offer,
+      availableFrom: '',
+      availableTo: ''
+    });
   };
 
   return (
@@ -101,6 +117,7 @@ export default function EditOffer() {
         >
           <form autoComplete="off" onSubmit={handleClick}>
             <div className="grid gap-5 place-items-center ">
+            {errorMessage && <AlertDismissibleExample message={errorMessage} onClose={handleAlertClose} />}
               <h1 className="text-[#bbd5d8] text-[40px]">Edit Offer</h1>
 
               <div>

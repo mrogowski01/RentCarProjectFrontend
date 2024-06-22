@@ -14,7 +14,7 @@ export function AddOffer() {
 
   const fetchUserCars = async () => {
     try {
-      const userId = localStorage.getItem('id'); // Assuming user ID is stored in localStorage
+      const userId = localStorage.getItem('id'); 
       const accessToken = localStorage.getItem('token');
 
       const res = await axios.get(
@@ -41,9 +41,9 @@ export function AddOffer() {
   const createOffer = async () => {
     try {
       const accessToken = localStorage.getItem('token');
-      const userId = localStorage.getItem('id'); // Assuming user ID is stored in localStorage
+      const userId = localStorage.getItem('id'); 
 
-      // Create the offer object including the selected car ID and dates
+  
       const offerWithUserId = { ...offer, carId: selectedCarId, idUser: userId };
       console.log(selectedCarId, userId);
       const res = await axios.post(
@@ -63,7 +63,7 @@ export function AddOffer() {
       }
     } catch (err) {
       if (err.response && err.response.data) {
-        setErrorMessage(err.response.data); // Set error message from server response
+        setErrorMessage(err.response.data); 
       } else {
         setErrorMessage('Error adding offer!');
       }

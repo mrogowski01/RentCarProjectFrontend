@@ -49,7 +49,7 @@ export default function ReserveOffer() {
         const { carId, idUser, price, availableFrom, availableTo } = res.data;
         setOffer({ carId, idUser, price, availableFrom, availableTo });
 
-        // Set initial values for reservation based on offer
+
         setReservation({
           idOffer: id,
           idUser: idUser,
@@ -66,9 +66,9 @@ export default function ReserveOffer() {
   const createReservation = async () => {
     try {
       const accessToken = localStorage.getItem('token');
-      const userId = localStorage.getItem('id'); // Assuming user ID is stored in localStorage
+      const userId = localStorage.getItem('id');
 
-      // Create the reservation object including the selected offer ID and dates
+      
       const reservationWithUserIdAndOfferId = { ...reservation, idOffer: id, idUser: userId };
       console.log(id, userId);
       console.log(reservationWithUserIdAndOfferId);
@@ -89,9 +89,9 @@ export default function ReserveOffer() {
       }
     } catch (err) {
       if (err.response && err.response.data) {
-        setError(err.response.data); // Ustawienie błędu z odpowiedzi serwera
+        setError(err.response.data);
       } else {
-        setError('Error adding reservation!'); // Domyślny komunikat błędu
+        setError('Error adding reservation!'); 
       }
       console.log(err);
     }
@@ -103,7 +103,7 @@ export default function ReserveOffer() {
 
   useEffect(() => {
     getOffer();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, []);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -179,8 +179,6 @@ export default function ReserveOffer() {
                   Submit
                 </button>
               </div>
-
-              {/* Wyświetlanie komponentu AlertDismissibleExample w przypadku wystąpienia błędu */}
               {error && <AlertDismissibleExample message={error} onClose={handleAlertClose} />}
             </div>
           </form>
